@@ -12,6 +12,7 @@ import * as Location from 'expo-location'
 
 const API_KEY = 'b49d485749mshab1bcba4baf0c9ap114f5ejsn9ed3298ece68'; // Replace with your actual API key
 
+// WeatherInfo component to display weather information
 const WeatherInfo = ({ location, temp_c, condition }) => (
   <View style={styles.weatherContainer}>
     <Text style={styles.weatherText}>Location: {location}</Text>
@@ -21,11 +22,11 @@ const WeatherInfo = ({ location, temp_c, condition }) => (
 );
 
 const App = () => {
-  const [location, setLocation] = useState('');
-  const [weatherData, setWeatherData] = useState(null);
-  const [currentLocationWeatherData, setCurrentLocationWeatherData] = useState(null);
+  const [location, setLocation] = useState(''); // State to hold the user-entered location
+  const [weatherData, setWeatherData] = useState(null); // State to hold weather data for the entered location
+  const [currentLocationWeatherData, setCurrentLocationWeatherData] = useState(null); // State to hold weather data for the current location
 
-  
+  // Function to fetch weather data for the entered location
   const fetchWeatherData = async () => {
     try {
       const response = await axios.get(`https://weatherapi-com.p.rapidapi.com/current.json?q=${location}`, {
@@ -40,7 +41,8 @@ const App = () => {
       setWeatherData(null);
     }
   };
-    
+   
+  // Function to get the user's current location and fetch weather data for that location
   const getCurrentLocationAndFetchWeather = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -54,6 +56,7 @@ const App = () => {
     fetchWeatherDataByLocation(latitude, longitude)
   };
 
+   // Function to fetch weather data for a given latitude and longitude
   const fetchWeatherDataByLocation = async (latitude, longitude) => {
     try {
       const response = await axios.get(`https://weatherapi-com.p.rapidapi.com/current.json?q=${latitude},${longitude}`, {
@@ -77,6 +80,7 @@ const App = () => {
         value={location}
         onChangeText={setLocation}
       />
+      {/* Button to fetch weather data for the entered location */}
       <TouchableOpacity
         style={[styles.button, !location && styles.disabledButton]} // Apply the 'disabledButton' style when 'location' is empty
         onPress={fetchWeatherData}
@@ -84,6 +88,7 @@ const App = () => {
       >
         <Text style={styles.buttonText}>Get Weather</Text>
       </TouchableOpacity>
+      {/* Button to fetch weather data for the user's current location */}
       <TouchableOpacity
         style={styles.button}
         onPress={getCurrentLocationAndFetchWeather}
@@ -91,7 +96,7 @@ const App = () => {
         <Text style={styles.buttonText}>Get Weather for Current Location</Text>
       </TouchableOpacity>
 
-      
+      {/* Display weather information for the entered location */}
       {weatherData && (
         <WeatherInfo
           location={weatherData.location.name}
@@ -100,6 +105,7 @@ const App = () => {
         />
       )}
 
+      {/* Display weather information for the current location */}
       {currentLocationWeatherData && (
         <View style={styles.currentLocationWeatherContainer}>
           <WeatherInfo
